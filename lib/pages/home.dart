@@ -1,6 +1,7 @@
 import 'package:fitness/models/diet_model.dart';
 import 'package:fitness/models/category_model.dart';
 import 'package:fitness/models/popular_model.dart';
+import 'package:fitness/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,15 +14,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<CategoryModel> categories = [];
-
   List<DietModel> diets = [];
-
   List<PopularDietsModel> popularDiets = [];
+  int _selectedIndex = 0;
 
   void _getInitialInfo() {
     categories = CategoryModel.getCategories();
     diets = DietModel.getDiets();
     popularDiets = PopularDietsModel.getPopularDiets();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getInitialInfo();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -55,6 +74,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 15),
               ListView.separated(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.only(left: 20, right: 20),
                 itemBuilder: (context, index) {
                   return Container(
@@ -80,11 +100,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             Text(
-                              popularDiets[index].level +
-                                  ' | ' +
-                                  popularDiets[index].duration +
-                                  ' | ' +
-                                  popularDiets[index].calorie,
+                              '${popularDiets[index].level} | ${popularDiets[index].duration} | ${popularDiets[index].calorie}',
                               style: TextStyle(
                                 color: Color(0xff7B6F72),
                                 fontSize: 13,
@@ -104,22 +120,20 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          popularDiets[index].boxIsSelected
-                              ? Colors.white
-                              : Colors.transparent,
+                      color: popularDiets[index].boxIsSelected
+                          ? Colors.white
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow:
-                          popularDiets[index].boxIsSelected
-                              ? [
-                                BoxShadow(
-                                  color: Color(0xff1D1617).withOpacity(0.07),
-                                  offset: Offset(0, 10),
-                                  blurRadius: 40,
-                                  spreadRadius: 0,
-                                ),
-                              ]
-                              : [],
+                      boxShadow: popularDiets[index].boxIsSelected
+                          ? [
+                              BoxShadow(
+                                color: Color(0xff1D1617).withOpacity(0.07),
+                                offset: Offset(0, 10),
+                                blurRadius: 40,
+                                spreadRadius: 0,
+                              ),
+                            ]
+                          : [],
                     ),
                   );
                 },
@@ -131,6 +145,26 @@ class _HomePageState extends State<HomePage> {
           SizedBox(height: 40),
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: const Color(0xff9DCEFF),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.logout),
+            label: 'Logout',
+          ),
+        ],
+      ), // bottomNavigationBar
     );
   }
 
@@ -195,10 +229,9 @@ class _HomePageState extends State<HomePage> {
                         child: Text(
                           'View',
                           style: TextStyle(
-                            color:
-                                diets[index].viewIsSelected
-                                    ? Colors.white
-                                    : Color(0xffC58BF2),
+                            color: diets[index].viewIsSelected
+                                ? Colors.white
+                                : Color(0xffC58BF2),
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
