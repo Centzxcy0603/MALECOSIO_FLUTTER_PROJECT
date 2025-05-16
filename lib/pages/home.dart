@@ -1,7 +1,10 @@
+// ignore_for_file: unused_element
+
 import 'package:fitness/models/diet_model.dart';
 import 'package:fitness/models/category_model.dart';
 import 'package:fitness/models/popular_model.dart';
 import 'package:fitness/pages/login.dart';
+import 'package:fitness/pages/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -145,9 +148,19 @@ class _HomePageState extends State<HomePage> {
           SizedBox(height: 40),
         ],
       ),
+
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => HomePage()));
+          } else if (index ==1) {
+            Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => ProfilePage()));
+          }
+        },
         selectedItemColor: const Color(0xff9DCEFF),
         unselectedItemColor: Colors.grey,
         items: const [
@@ -164,7 +177,7 @@ class _HomePageState extends State<HomePage> {
             label: 'Logout',
           ),
         ],
-      ), // bottomNavigationBar
+      ),
     );
   }
 
